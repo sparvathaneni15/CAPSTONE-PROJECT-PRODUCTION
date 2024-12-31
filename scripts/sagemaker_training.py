@@ -25,6 +25,7 @@ def monitor_and_refresh_token(refresh_function, expiration_time):
         
         time.sleep(60)
 
+
 def train_model(boto_session, role, bucket, data_key):
     """
     Train a model using SageMaker.
@@ -75,7 +76,7 @@ def train_model(boto_session, role, bucket, data_key):
     )
     
     # Start monitoring token expiration in a separate thread
-    monitor_thread = threading.Thread(target=monitor_and_refresh_token, args=(refresh_credentials, expiration_time), daemon=True)
+    monitor_thread = threading.Thread(target=monitor_and_refresh_token, daemon=True)
     monitor_thread.start()
     
     # Launch training job
