@@ -1,7 +1,3 @@
-Below is a sample `README.md` file detailing how to run the refactored code:
-
----
-
 # SageMaker Training with Temporary AWS Credentials
 
 This repository contains Python scripts to train a machine learning model on AWS SageMaker using temporary AWS credentials. The code is modular, production-ready, and includes logging and unit testing capabilities.
