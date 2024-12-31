@@ -1,4 +1,3 @@
-```markdown
 # Training a Model with Amazon SageMaker and Hosting an Application with AWS Elastic Beanstalk
 
 This guide outlines how to train a machine learning model using Amazon SageMaker and deploy a Flask-based API application on AWS Elastic Beanstalk to serve user requests.
@@ -143,20 +142,3 @@ curl -X POST -H "Content-Type: application/json" \
 -d '{"features": [5.1,3.5,1.4,0.2]}' \
 http://<your-elastic-beanstalk-url>/predict
 ```
-
----
-
-By following these steps, you can train a machine learning model using Amazon SageMaker and deploy an API using AWS Elastic Beanstalk to serve predictions to users.
-```
-
-Sources
-[1] Train a Model - Amazon SageMaker AI - AWS Documentation https://docs.aws.amazon.com/sagemaker/latest/dg/ex1-train-model.html
-[2] How to Build, Train, and Deploy Machine Learning Models ... - AWS https://aws.amazon.com/machine-learning/accelerate-amazon-sagemaker/
-[3] Create an example application with Elastic Beanstalk https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/GettingStarted.CreateApp.html
-[4] Deploying Java applications with Elastic Beanstalk https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_Java.html
-[5] How To Process Incoming Request Data in Flask - DigitalOcean https://www.digitalocean.com/community/tutorials/processing-incoming-request-data-in-flask
-[6] Python | Build a REST API using Flask - GeeksforGeeks https://www.geeksforgeeks.org/python-build-a-rest-api-using-flask/
-[7] Train a Model with Amazon SageMaker - AWS Documentation https://docs.aws.amazon.com/en_en/sagemaker/latest/dg/how-it-works-training.html
-[8] Training and Hosting a PyTorch model in Amazon SageMaker https://sagemaker-examples.readthedocs.io/en/latest/aws_sagemaker_studio/frameworks/pytorch_cnn_cifar10/pytorch_cnn_cifar10.html
-[9] An AWS Elastic Beanstalk Tutorial for Beginners - SitePoint https://www.sitepoint.com/aws-elastic-beanstalk-beginner-tutorial/
-[10] How to Build a Basic API with Python Flask - Mattermost https://mattermost.com/blog/how-to-build-a-basic-api-with-python-flask/
