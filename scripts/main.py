@@ -1,6 +1,6 @@
 import argparse
-from aws_credentials import refresh_credentials
-from sagemaker_training import train_model
+from scripts.aws_credentials import refresh_credentials
+from scripts.sagemaker_training import train_model
 
 def main():
     parser = argparse.ArgumentParser(description="Run SageMaker training with temporary AWS credentials.")

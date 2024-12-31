@@ -1,5 +1,5 @@
 import unittest
-from aws_credentials import get_temporary_credentials
+from scripts.aws_credentials import get_temporary_credentials
 
 class TestAWSCredentials(unittest.TestCase):
     
