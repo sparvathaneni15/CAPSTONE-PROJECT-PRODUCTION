@@ -1,5 +1,3 @@
-### **README.md**
-
 # **Climate Prediction Application Deployment**
 
 This repository contains the Python scripts and modules required to deploy and manage the AWS resources for the Climate Prediction Application. The application leverages AWS services such as S3, SageMaker, Glue, and CloudWatch to handle data storage, model training, deployment, monitoring, and retraining workflows.
