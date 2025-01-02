@@ -1,104 +1,183 @@
-# SageMaker Training with Temporary AWS Credentials
+### **README.md**
 
-This repository contains Python scripts to train a machine learning model on AWS SageMaker using temporary AWS credentials. The code is modular, production-ready, and includes logging and unit testing capabilities.
+# **Climate Prediction Application Deployment**
 
-## Prerequisites
-
-Before running the code, ensure you have the following:
-
-1. **Python Environment**:
-   - Python 3.7 or higher installed.
-   - Install required dependencies using `pip install -r requirements.txt`.
-
-2. **AWS Configuration**:
-   - An AWS account with the necessary permissions to run SageMaker training jobs.
-   - An IAM role ARN with SageMaker execution permissions.
-   - An S3 bucket to store training data and outputs.
-
-3. **Training Data**:
-   - A CSV file uploaded to your S3 bucket. Update the `--data-key` parameter with its path.
-
-4. **Dependencies**:
-   - Install the following Python libraries if not already installed:
-     - `boto3`
-     - `sagemaker`
-
-## File Structure
-
-```
-.
-├── aws_credentials.py       # Handles temporary AWS credentials
-├── sagemaker_training.py    # Defines SageMaker training logic
-├── main.py                  # CLI entry point for running the code
-├── test_aws_credentials.py  # Unit tests for AWS credential functions
-├── requirements.txt         # Python dependencies
-└── README.md                # Documentation
-```
-
-## How to Run
-
-### Step 1: Install Dependencies
-
-Run the following command to install required Python libraries:
-
-```bash
-pip install -r requirements.txt
-```
-
-### Step 2: Prepare Your Environment
-
-Ensure your AWS environment is set up:
-- Create an S3 bucket and upload your training data (e.g., `train.csv`).
-- Note down your IAM role ARN and S3 bucket name.
-
-### Step 3: Run the Code
-
-Use the `main.py` script to execute the training job. The script accepts command-line arguments for configuration.
-
-```bash
-python main.py --role <IAM_ROLE_ARN> --bucket <S3_BUCKET_NAME> --data-key <S3_DATA_KEY>
-```
-
-#### Example:
-
-```bash
-python main.py --role arn:aws:iam::123456789012:role/SageMakerRole \
-               --bucket my-sagemaker-bucket \
-               --data-key datasets/train.csv
-```
-
-### Step 4: Monitor Training
-
-The script automatically refreshes temporary AWS credentials during long-running jobs. Logs will provide updates on token refreshes and job status.
-
-### Step 5: Output Location
-
-The trained model artifacts will be saved in the specified S3 bucket under the `output/` folder.
-
-## Testing
-
-Unit tests are included for AWS credential functions. To run tests:
-
-```bash
-python -m unittest test_aws_credentials.py
-```
-
-## Logging
-
-Logs are written to the console for monitoring purposes. You can modify logging levels in the `sagemaker_training.py` file by changing:
-
-```python
-logging.basicConfig(level=logging.INFO)
-```
-
-## Notes
-
-- Ensure your IAM role has sufficient permissions for SageMaker and S3 operations.
-- For large datasets, consider using SageMaker's distributed training capabilities by adjusting instance types and counts in `sagemaker_training.py`.
+This repository contains the Python scripts and modules required to deploy and manage the AWS resources for the Climate Prediction Application. The application leverages AWS services such as S3, SageMaker, Glue, and CloudWatch to handle data storage, model training, deployment, monitoring, and retraining workflows.
 
 ---
 
-This `README.md` provides clear instructions for setting up, running, and testing the code.
+## **Features**
+- **S3 Manager**: Handles S3 bucket operations (e.g., creating buckets, uploading data).
+- **SageMaker Manager**: Manages SageMaker endpoints for model deployment and enables CloudWatch logging.
+- **Glue Manager**: Starts AWS Glue jobs for data preprocessing and monitors their status.
+- **CloudWatch Manager**: Creates CloudWatch alarms and logs custom metrics for system monitoring.
+- **Data Pipeline**: Orchestrates the end-to-end data flow from raw data ingestion to processed output.
+
+---
+
+## **Prerequisites**
+Before running the application, ensure you have the following:
+1. **AWS Account**: Access to an AWS account with permissions to use S3, SageMaker, Glue, and CloudWatch.
+2. **AWS CLI**: Installed and configured with appropriate credentials (`aws configure`).
+3. **Python 3.8+**: Installed on your system.
+4. **Docker** (optional): For containerizing the application.
+
+---
+
+## **Setup Instructions**
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/your-repo/climate-prediction-deployment.git
+cd climate-prediction-deployment
+```
+
+### 2. Install Dependencies
+Create a virtual environment and install the required Python libraries:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### 3. Configure AWS Credentials
+Ensure your AWS credentials are properly configured using the AWS CLI:
+```bash
+aws configure
+```
+Provide your `AWS Access Key ID`, `Secret Access Key`, `Region`, and `Output Format`.
+
+---
+
+## **How to Run**
+
+### 1. Create an S3 Bucket and Upload Data
+Run the `main.py` script to create an S3 bucket and upload raw data:
+```bash
+python main.py
+```
+This script uses the `S3Manager` class to:
+- Create an S3 bucket named `climate-prediction-data`.
+- Upload raw data files to the `raw_data/` folder in the bucket.
+
+Modify `main.py` as needed to specify local file paths or bucket names.
+
+### 2. Start a Glue Job (Optional)
+To preprocess data using AWS Glue, use the `GlueManager` module:
+```python
+from app.glue_manager import GlueManager
+
+glue_manager = GlueManager()
+job_run_id = glue_manager.start_job("your-glue-job-name")
+status = glue_manager.get_job_status("your-glue-job-name", job_run_id)
+print(f"Glue Job Status: {status}")
+```
+
+### 3. Deploy a SageMaker Endpoint
+Use the `SageMakerManager` module to create a SageMaker endpoint:
+```python
+from app.sagemaker_manager import SageMakerManager
+
+sagemaker_manager = SageMakerManager()
+sagemaker_manager.create_endpoint("climate-endpoint", "climate-endpoint-config")
+```
+
+### 4. Monitor Metrics with CloudWatch
+Use the `CloudWatchManager` module to log metrics or create alarms:
+```python
+from app.cloudwatch_manager import CloudWatchManager
+
+cloudwatch_manager = CloudWatchManager()
+cloudwatch_manager.log_metric("ClimateAppNamespace", "InferenceLatency", 123.45)
+cloudwatch_manager.create_alarm(
+    alarm_name="HighLatencyAlarm",
+    metric_name="InferenceLatency",
+    namespace="ClimateAppNamespace",
+    threshold=100,
+    comparison_operator="GreaterThanThreshold",
+    period=60,
+    evaluation_periods=1
+)
+```
+
+---
+
+## **Running Tests**
+Unit tests are provided in the `tests/` directory. To run all tests:
+```bash
+python -m unittest discover tests/
+```
+
+Example command to run a specific test file:
+```bash
+python -m unittest tests.test_s3_manager
+```
+
+---
+
+## **Containerization**
+
+To containerize the application using Docker:
+
+### 1. Build Docker Image
+```bash
+docker build -t climate-prediction-app .
+```
+
+### 2. Run Docker Container
+```bash
+docker run -it --rm climate-prediction-app
+```
+
+---
+
+## **Project Structure**
+```
+climate_prediction_deployment/
+│
+├── app/
+│   ├── __init__.py              # Package initialization file
+│   ├── s3_manager.py            # Module for S3 operations
+│   ├── sagemaker_manager.py     # Module for SageMaker operations
+│   ├── glue_manager.py          # Module for AWS Glue operations
+│   ├── cloudwatch_manager.py    # Module for CloudWatch operations
+│   └── data_pipeline.py         # Data pipeline orchestration module
+│
+├── tests/
+│   ├── __init__.py              # Package initialization file for tests
+│   ├── test_s3_manager.py       # Unit tests for S3 manager module
+│   ├── test_sagemaker_manager.py# Unit tests for SageMaker manager module
+│   ├── test_data_pipeline.py    # Unit tests for data pipeline module
+│   └── ...                      # Additional test files as needed
+│
+├── Dockerfile                   # Dockerfile for containerization
+├── requirements.txt             # Python dependencies file
+├── main.py                      # Entry point script for deployment tasks
+└── README.md                    # Documentation (this file)
+```
+
+---
+
+## **Logging**
+The application uses Python's built-in `logging` module to log key events and errors:
+- Logs are written to standard output by default.
+- You can integrate logs with AWS CloudWatch by configuring your environment or using a logging agent.
+
+---
+
+## **Future Enhancements**
+- Add CI/CD pipelines using tools like GitHub Actions or Jenkins.
+- Integrate SageMaker Model Monitor for automated detection of data drift.
+- Implement a user-friendly web UI using Flask or FastAPI.
+
+---
+
+## **Known Issues**
+If you encounter issues with permissions, ensure that your IAM role has sufficient privileges to access AWS services (e.g., S3, Glue, SageMaker).
+
+---
+
+## **Contact**
+For questions or support, please contact [Your Name] at [Your Email].
 
 Sources
-[1] image.jpg https://pplx-res.cloudinary.com/image/upload/v1735656608/user_uploads/vxBgDTOyrTJxHfN/image.jpg
